@@ -184,7 +184,7 @@ class execute_once(EdReg):
 dual_axis = Dual_Axis()
 Execute = execute_once(10)
 
-drawing = 0
+
 while PCS_condition:
     print()
     print("台電調度指令:", dispatch)
@@ -196,17 +196,14 @@ while PCS_condition:
 
     end = time.time()
 
-    drawing += 1
-    if (drawing >= 4):
-        dual_axis.plot(main_dataframe['Grid_frequency'].to_list(), main_dataframe['Demand_power'].to_list(), main_dataframe['Active_power'].to_list(),
-                        'r-','b-','g-',"grid_frequency",'Demand_power','Active_power',None ,(59.4,60.6), (-12.5,12.5), (-10,10))
-        dual_axis.draw(0.1)
-        drawing = 0
-    else:
-        pass
+
+    dual_axis.plot(main_dataframe['Grid_frequency'].to_list(), main_dataframe['Demand_power'].to_list(), main_dataframe['Active_power'].to_list(),
+                    'r-','b-','g-',"grid_frequency",'Demand_power','Active_power',None ,(59.4,60.6), (-12.5,12.5), (-10,10))
+    dual_axis.draw(0.1)
+    drawing = 0
+
     execution_time = end - start
     print("程式執行時間: ", execution_time, "秒")
-    time.sleep(0.3)
+    time.sleep(1-execution_time)
 # test
-# test with fetch feature
-# test123
+
