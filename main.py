@@ -166,11 +166,15 @@ class execute_once(EdReg):
         self.grid_frequency
         self.demand_power
         self.active_power = Delta.active_power()
+        Control_Performance = 100 - ((self.demand_power - self.active_power) / self.total_capacity) * 100
+
             # self.SBSPM = quality_index(self.grid_frequency, (self.active_power/self.total_capacity) ) # (頻率, 功率百分比)
 
         # show in Terminal
         print("Grid frequency: ", self.grid_frequency, "Hz")
-        print("Actaul output power: ", self.active_power,"kW")
+        print("Demand power:", self.demand_power, "kW")
+        print("Actaul power: ", self.active_power,"kW")
+        print("Power Control Error: ", Control_Performance, "%")
             # print("SBSPM: ", self.SBSPM, "%")
         print()
 
@@ -197,7 +201,6 @@ Execute = execute_once(10)
 first_excute = True
 
 while PCS_condition:
-    global main_dataframe
     print()
     print("台電調度指令:", dispatch)
 
@@ -207,10 +210,6 @@ while PCS_condition:
     main_dataframe = Execute.new_data_collection()
 
     end = time.time()
-
-    if first_excute:
-        t2_drawing.start()
-        first_excute = False
 
     # dual_axis.plot(main_dataframe['Grid_frequency'].to_list(), main_dataframe['Demand_power'].to_list(), main_dataframe['Active_power'].to_list(),
     #                 'r-','b-','g-',"grid_frequency",'Demand_power','Active_power',None ,(59.4,60.6), (-12.5,12.5), (-10,10))
