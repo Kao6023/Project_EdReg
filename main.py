@@ -166,7 +166,7 @@ class execute_once(EdReg):
         self.grid_frequency
         self.demand_power
         self.active_power = Delta.active_power()
-        Control_Performance = 100 - ((self.demand_power - self.active_power) / self.total_capacity) * 100
+        Control_Performance = 100 - ((self.demand_power - self.active_power) / self.total_capacity) * 100 # 類似SBSPM指標
 
             # self.SBSPM = quality_index(self.grid_frequency, (self.active_power/self.total_capacity) ) # (頻率, 功率百分比)
 
