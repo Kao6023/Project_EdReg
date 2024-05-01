@@ -11,6 +11,7 @@ import Delta
 from EdReg import EdReg
 
 
+
 connect = ModbusClient(host="127.0.0.1",port=502, auto_open=True, auto_close=True)
 mode_flag = 0 # 0:台電無命令 1:有
 
@@ -33,7 +34,7 @@ def initailly_checking():
     
 PCS_condition = initailly_checking()
 
-'''threading''' # 台電命令
+'''台電命令''' # threading
 dispatch = 0 
 def tpc_command():
     global dispatch
@@ -53,6 +54,16 @@ def run_thread():
 
 run_thread()
 
+'''畫圖''' # threading
+def drawing():
+    dual_axis = Dual_Axis()
+    while True:
+        dual_axis.plot(main_dataframe['Grid_frequency'].to_list(), main_dataframe['Demand_power'].to_list(), main_dataframe['Active_power'].to_list(),
+                    'r-','b-','g-',"grid_frequency",'Demand_power','Active_power',None ,(59.4,60.6), (-12.5,12.5), (-10,10))
+        dual_axis.draw(1)
+t2_drawing = threading.Thread(target = drawing)
+
+    
 
 # grid frequency list
 grid_frequency_list = pd.read_excel("grid_frequency_EdReg.xlsx")["frequency"].tolist()
@@ -183,9 +194,10 @@ class execute_once(EdReg):
 
 dual_axis = Dual_Axis()
 Execute = execute_once(10)
+first_excute = True
 
-drawing = 0
 while PCS_condition:
+    global main_dataframe
     print()
     print("台電調度指令:", dispatch)
 
@@ -196,17 +208,17 @@ while PCS_condition:
 
     end = time.time()
 
-    drawing += 1
-    if (drawing >= 4):
-        dual_axis.plot(main_dataframe['Grid_frequency'].to_list(), main_dataframe['Demand_power'].to_list(), main_dataframe['Active_power'].to_list(),
-                        'r-','b-','g-',"grid_frequency",'Demand_power','Active_power',None ,(59.4,60.6), (-12.5,12.5), (-10,10))
-        dual_axis.draw(0.1)
-        drawing = 0
-    else:
-        pass
+    if first_excute:
+        t2_drawing.start()
+        first_excute = False
+
+    # dual_axis.plot(main_dataframe['Grid_frequency'].to_list(), main_dataframe['Demand_power'].to_list(), main_dataframe['Active_power'].to_list(),
+    #                 'r-','b-','g-',"grid_frequency",'Demand_power','Active_power',None ,(59.4,60.6), (-12.5,12.5), (-10,10))
+    # dual_axis.draw(0.1)
+
     execution_time = end - start
     print("程式執行時間: ", execution_time, "秒")
-    time.sleep(0.3)
+    time.sleep(1-execution_time)
 # test
 # test with fetch feature
 # test123
