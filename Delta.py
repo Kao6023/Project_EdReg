@@ -1,7 +1,7 @@
 from pyModbusTCP.client import ModbusClient
 import numpy as np
 
-connect = ModbusClient(host="127.0.0.1",port=502, auto_open=True, auto_close=True)
+connect = ModbusClient(host="192.168.1.136",port=502, auto_open=True, auto_close=True)
 
 # 將tcp收到的值轉為int16型態
 def read_conversion(position):
@@ -37,5 +37,5 @@ def active_power():
 
 
 if __name__ == "__main__":
-    value = read_conversion(4097)
+    value = read_conversion(4103)
     print(value)

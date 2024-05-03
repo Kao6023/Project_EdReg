@@ -24,8 +24,9 @@ class Waveform():
     
 if __name__ == "__main__":
     waveform = Waveform()
-    start = time.time()
-    waveform.main_list()
-    waveform.show()
-    end = time.time()
-    print(end-start)
+    while True:
+        start = time.time()
+        waveform.main_list()
+        waveform.show()
+        end = time.time()
+        print(end-start)

@@ -14,8 +14,8 @@ class EdReg():
 
     # 讀取excel資料轉成list形式。 Out:既定排程列表
     def scheduled_list(self): 
-        self.energytransfer_list = pd.read_excel("schedule_EdReg.xlsx")["Energy_transfer(kW)"].to_list()
-        self.time_list = pd.read_excel("schedule_EdReg.xlsx")["Time"].to_list()
+        self.energytransfer_list = pd.read_excel("/home/ncu-ems/gitCloneTest/Project_EdReg/schedule_Edreg.xlsx")["Energy_transfer(kW)"].to_list()
+        self.time_list = pd.read_excel("/home/ncu-ems/gitCloneTest/Project_EdReg/schedule_Edreg.xlsx")["Time"].to_list()
         return self.energytransfer_list, self.time_list
 
     # 得到excel表內的既定排程功率(%)。 Out: 當下排程功率(前、現在、後)、排程時段

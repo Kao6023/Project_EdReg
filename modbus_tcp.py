@@ -7,8 +7,8 @@ import streamlit as st
 from datetime import datetime
 from pyModbusTCP.client import ModbusClient
 import numpy as np
-from data_conversion import read_conversion
-from data_conversion import write_conversion
+from Delta import read_conversion
+from Delta import write_conversion
 
 #address
 address_PCS_Status = 4097
@@ -39,9 +39,15 @@ def turn_off_PCS():
     connect.write_single_register(4097, 0)
     PCS_status = connect.read_holding_registers(4097, 1)
     print("PCS status: ", int(PCS_status[0]))
+
+def demand_0():
+    connect.write_single_register(4103, 0)
+    time.sleep(0.5)
+    demand_power = connect.read_holding_registers(4103, 1)
+    print(demand_power)
     
 
 
-turn_on_PCS()
+demand_0()
 
 

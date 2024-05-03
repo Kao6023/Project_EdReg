@@ -12,7 +12,7 @@ from EdReg import EdReg
 
 
 
-connect = ModbusClient(host="127.0.0.1",port=502, auto_open=True, auto_close=True)
+connect = ModbusClient(host="192.168.1.136",port=502, auto_open=True, auto_close=True)
 mode_flag = 0 # 0:台電無命令 1:有
 
 #　Check PCS and Turn ON
@@ -93,7 +93,8 @@ class execute_once(EdReg):
             'Time' : [datetime.now().strftime('%Y-%m-%d %H:%M:%S')],
             'Grid_frequency' : [60],
             'Demand_power' : [0],
-            'Active_power' : [0]
+            'Active_power' : [0],
+            'Power Control Index' : [0],
         }
         self.main_dataframe = pd.DataFrame(initial_data, index=[0])
         super().scheduled_list()
@@ -117,7 +118,7 @@ class execute_once(EdReg):
                 self.demand_power = super().dReg_05(self.grid_frequency) + dispatch
                 print(mode_flag)
                 mode_flag += 1
-                if (mode_flag >= 10): # 300
+                if (mode_flag > 300): # 300
                     print(mode_flag)
                     mode_flag = 0
                     dispatch = 0
@@ -156,9 +157,10 @@ class execute_once(EdReg):
             self.demand_power = self.total_capacity
         elif (self.demand_power <= -1*self.total_capacity):
             self.demand_power = -1*self.total_capacity
+        self.demand_power = round(self.demand_power, 1)
         Delta.power_demand("write", self.demand_power)
         # wait for PCS to reaction
-        time.sleep(0.5)
+        time.sleep(0.75)
 
     
     def new_data_collection(self):
@@ -166,6 +168,7 @@ class execute_once(EdReg):
         self.grid_frequency
         self.demand_power
         self.active_power = Delta.active_power()
+
         Control_Performance = 100 - ((self.demand_power - self.active_power) / self.total_capacity) * 100 # 類似SBSPM指標
 
             # self.SBSPM = quality_index(self.grid_frequency, (self.active_power/self.total_capacity) ) # (頻率, 功率百分比)
@@ -174,7 +177,7 @@ class execute_once(EdReg):
         print("Grid frequency: ", self.grid_frequency, "Hz")
         print("Demand power:", self.demand_power, "kW")
         print("Actaul power: ", self.active_power,"kW")
-        print("Power Control Error: ", Control_Performance, "%")
+        print("Power Control Index: ", Control_Performance, "%")
             # print("SBSPM: ", self.SBSPM, "%")
         print()
 
@@ -184,6 +187,7 @@ class execute_once(EdReg):
         'Grid_frequency':[self.grid_frequency],
         'Demand_power':[self.demand_power],
         'Active_power':[self.active_power],
+        'Power Control Index': [Control_Performance]
             # 'SBSPM': [self.SBSPM]
         }
         # make get_data to DataFrame format
@@ -199,6 +203,7 @@ class execute_once(EdReg):
 dual_axis = Dual_Axis()
 Execute = execute_once(10)
 first_excute = True
+time_error = 0
 
 while PCS_condition:
     print()
@@ -217,7 +222,12 @@ while PCS_condition:
 
     execution_time = end - start
     print("程式執行時間: ", execution_time, "秒")
-    time.sleep(1-execution_time)
+    if (execution_time <= 1):
+        time.sleep(1-execution_time)
+        time_error = 0
+    else:
+        time.sleep(0)
+        time_error = 1
 # test
 # test with fetch feature
 # test123
