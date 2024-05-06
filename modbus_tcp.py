@@ -44,6 +44,7 @@ def demand_0():
     connect.write_single_register(4103, 0)
     time.sleep(0.5)
     demand_power = connect.read_holding_registers(4103, 1)[0]
+    print(demand_power)
 
 
     

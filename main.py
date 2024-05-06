@@ -54,7 +54,7 @@ def run_thread():
 
 run_thread()
 
-'''畫圖''' # threading
+'''畫圖''' # threading #目前沒用到
 def drawing():
     dual_axis = Dual_Axis()
     while True:
@@ -66,7 +66,7 @@ t2_drawing = threading.Thread(target = drawing)
     
 
 # grid frequency list
-grid_frequency_list = pd.read_excel("grid_frequency_EdReg.xlsx")["frequency"].tolist()
+grid_frequency_list = pd.read_excel("grid_frequency_EdReg_nonemergency.xlsx")["frequency"].tolist()
 count = 0
 def data_grid_frequency(): # take out the next element of ("grid_frequency.xlsx")["frequency"]
     global count
@@ -111,7 +111,7 @@ class execute_once(EdReg):
         # if emergency (f<59.5) --> run dReg0.5 900 sec
         if (self.grid_frequency <= 59.5):
             self.emergency = 1
-
+            print("頻率過低 !")
         
         if (self.emergency == 0): 
             if (mode_flag != 0): # 台電命令模式 300 秒
